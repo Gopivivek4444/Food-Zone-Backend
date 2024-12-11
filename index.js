@@ -10,7 +10,7 @@ const cors = require('cors')
 
 const app = express()
 
-PORT = 4000
+PORT = process.env.PORT || 4000
 
 dotEnv.config()
 app.use(cors())
@@ -30,6 +30,6 @@ app.listen(PORT,() =>{
 })
 
 
-app.use('/home',(req,res) =>{
+app.use('/',(req,res) =>{
     res.send("<h1> Welcome to FoodZone")
 })
