@@ -40,7 +40,7 @@ exports.loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if(!user || await bcrypt.compare(password, user.password)){
-      return res.status(401).json({error: "Invalid username or Password"});
+      return res.status(401).json({message: "Invalid username or Password"});
     }
     const token = generateToken(user._id);
     res.status(200).json({message:"Login Successfull", token})
