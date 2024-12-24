@@ -4,10 +4,8 @@ const bcrypt = require('bcryptjs')
 const dotEnv = require('dotenv')
 
 dotEnv.config();
-// Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-};
+ 
+const secretKey = process.env.WhatIsYourName
 
 // Register User
 exports.registerUser = async (req, res) => {
@@ -42,10 +40,10 @@ exports.loginUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    if(!user || await bcrypt.compare(password, user.password)){
+    if(!user || !(await bcrypt.compare(password, user.password))){
       return res.status(401).json({message: "Invalid username or Password"});
     }
-    const token = generateToken(user._id);
+    const token = jwt.sign({userId: user._id}, secretKey, {expiresIn:"1h"})
     res.status(200).json({message:"Login Successfull", token})
     console.log(email,"This is Token : ",token);
 
