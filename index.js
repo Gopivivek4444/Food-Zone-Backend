@@ -5,6 +5,7 @@ const mongoose =require('mongoose')
 const vendorRoutes = require('./routes/vendorRoutes')
 const firmRoutes = require('./routes/firmRoutes')
 const productRoutes = require('./routes/productRoutes')
+const userAuthRoutes = require('./routes/userAuthRoutes')
 const bodyparser = require('body-parser')
 const cors = require('cors')
 
@@ -24,7 +25,7 @@ app.use('/vendor',vendorRoutes);
 app.use('/firm',firmRoutes);
 app.use('/product',productRoutes);
 app.use('/uploads',express.static('uploads'))
-
+app.use('/user',userAuthRoutes);
 app.listen(PORT,() =>{
     console.log(`server started and running at port no ${PORT}`)
 })
