@@ -12,21 +12,24 @@ exports.registerUser = async (req, res) => {
 
   try {
     const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: 'User already exists' });
-
-    const user = await User.create({ username, email, password });
-    if (user) {
-      res.status(201).json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        token: generateToken(user._id)
-      });
-    } else {
-      res.status(400).json({ message: 'Invalid user data' });
+    if(userExists){
+      return res.status(400).json({ message: 'User already exists' });
+      
     }
+     const hashedPassword = await bcrypt.hash(password,10);
+     const newUser = new User({
+      username,
+      email,
+      password: hashedPassword
+     }); 
+
+     await newUser.save();
+     res.status(201).json({message:"User Registered Successfully"});
+     console.log("registered");
+
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error });
+    console.error(error);
+    res.status(500).json({ error: 'Server Error', error });
   }
 };
 
@@ -36,19 +39,15 @@ exports.loginUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-
-    if (user && (await user.matchPassword(password))) {
-        res.status(200).json({
-            _id: user.id,
-            username: user.username,
-            email: user.email,
-            token: generateToken(user._id),
-            message: "Login Successful"
-          });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+    if(!user || await bcrypt.compare(password, user.password)){
+      return res.status(401).json({error: "Invalid username or Password"});
     }
+    const token = generateToken(user._id);
+    res.status(200).json({message:"Login Successfull", token})
+    console.log(email,"This is Token : ",token);
+
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Server Error', error });
   }
 };
