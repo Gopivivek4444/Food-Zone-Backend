@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const bcrypt = require('bcryptjs')
+const dotEnv = require('dotenv')
 
+dotEnv.config();
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
